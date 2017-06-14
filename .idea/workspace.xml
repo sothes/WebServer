@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ec0687c1-155e-450c-87be-32bf352230dd" name="Default" comment="refactoring and optimizing&#10;&#10;einige kleine Dinge verändert und optimiert">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/Betrieb/info (2).html" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Betrieb/Connection.class" afterPath="$PROJECT_DIR$/out/production/Betrieb/Connection.class" />
+    <list default="true" id="ec0687c1-155e-450c-87be-32bf352230dd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Doc/info.html" afterPath="$PROJECT_DIR$/Doc/info.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Connection.java" afterPath="$PROJECT_DIR$/src/Connection.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -466,7 +462,14 @@
       <option name="project" value="LOCAL" />
       <updated>1497440785289</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Logger&#10;&#10;Console logger added. File logger comes next.">
+      <created>1497445628661</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1497445628661</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -509,7 +512,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="refactoring and optimizing&#10;&#10;einige kleine Dinge verändert und optimiert" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactoring and optimizing&#10;&#10;einige kleine Dinge verändert und optimiert" />
+    <MESSAGE value="Logger&#10;&#10;Console logger added. File logger comes next." />
+    <option name="LAST_COMMIT_MESSAGE" value="Logger&#10;&#10;Console logger added. File logger comes next." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -652,6 +656,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
