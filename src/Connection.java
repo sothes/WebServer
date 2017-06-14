@@ -1,4 +1,3 @@
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -8,10 +7,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.StringTokenizer;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class Connection extends Thread {
 
@@ -27,6 +28,8 @@ public class Connection extends Thread {
 	private String DirName="Doc";
 	private File file;
 
+	private Logger conLogger;
+
 
 
 	Connection(Socket ss){
@@ -38,6 +41,7 @@ public class Connection extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		startLogging();
 
 	}
 
@@ -45,6 +49,8 @@ public class Connection extends Thread {
 		String line;
 		FileInputStream fis=null;
 		System.out.println(file.getAbsolutePath());
+
+		conLogger.info("Connection established");
 
 		try {
 			while((line=r.readLine())!=null){
@@ -55,13 +61,14 @@ public class Connection extends Thread {
 					FileName=token.nextToken();
 					FileName=token.nextToken();
 					FileName=FileName.substring(1);*/
-					System.out.println(FileName);
+					conLogger.info("Path: "+FileName);
 
 
 
 
 					if(FileName.equals(null)){
-						System.out.println("jsndf");
+					    conLogger.warning("File not found, throwing 404");
+						System.out.println("404");
 						w.println("HTTP/1.1 404 Not Found");
 						w.println("Server: MyServer");
 						w.println("Connection: close");
@@ -71,10 +78,12 @@ public class Connection extends Thread {
 						w.close();
 						r.close();
 						//ss.close();
+                        conLogger.info("Connection closed");
 					}
 					if(FileName.equals("info.html")){
-						String content=contentType(FileName);
-						Lesen(file);
+					    conLogger.info("Sending website in html format");
+						String content = contentType(FileName);
+						Lesen();
 						bytes=file.length();
 
 
@@ -87,24 +96,16 @@ public class Connection extends Thread {
 						w.println("");
 						w.println(body);
 						w.close();
+						conLogger.info("Connection closed");
 
 
 					}}
 				System.out.println("Server: "+line);
-
-
-
-
-
-
-
-
-
 			}
 			r.close();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		    conLogger.warning("File not found, exception, showing 404");
 			w.println("HTTP/1.1 404 Not Found");
 			w.println("Server: MyServer");
 			w.println("Connection: close");
@@ -112,12 +113,10 @@ public class Connection extends Thread {
 			w.println("");
 			w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> hjshdf </body> </html>");
 			w.close();
-
-
 		}
 	}
 
-	public String contentType(String FileName) {
+	private String contentType(String FileName) {
 		// TODO Auto-generated method stub
 		if(FileName.endsWith(".htm") || FileName.endsWith(".html")){
 
@@ -149,7 +148,7 @@ public class Connection extends Thread {
 	}
 
 
-	public void Lesen(File f) {
+	private void Lesen() {
 		String x;
 		FileReader fr;
 		try {
@@ -172,4 +171,13 @@ public class Connection extends Thread {
 
 		}
 	}
+	private void startLogging(){
+        conLogger = Logger.getLogger(Connection.class.getName());
+        conLogger.setLevel(Level.ALL);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
+        conLogger.addHandler(handler);
+        handler.setFormatter(new SimpleFormatter());
+        conLogger.fine("hello world");
+    }
 }
