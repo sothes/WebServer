@@ -12,10 +12,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.StringTokenizer;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class Connection extends Thread {
 
@@ -26,27 +22,20 @@ public class Connection extends Thread {
 	private Socket ss;
 	private long bytes;
 	private String body;
-
-	Logger logCon;
+	
+	private String FileName="info.html";
+	private String DirName="Doc";
+	private File file;
 
 
 
 	Connection(Socket ss){
-		logCon=Logger.getLogger(Connection.class.getName());
-
-		logCon.setLevel(Level.ALL);
-		ConsoleHandler handler = new ConsoleHandler();
-		handler.setLevel(Level.ALL);
-		logCon.addHandler(handler);
-		handler.setFormatter(new SimpleFormatter());
-		logCon.fine("hello world");
-
+		file = new File(DirName+File.separator+FileName);
 		try {
 			r=new BufferedReader(new InputStreamReader(ss.getInputStream()));
 			w=new PrintWriter(new OutputStreamWriter(ss.getOutputStream()));
 			ou= new DataOutputStream(ss.getOutputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -55,22 +44,23 @@ public class Connection extends Thread {
 	public void run(){
 		String line;
 		FileInputStream fis=null;
-		boolean fileExists =true;
-		String fileName="";
+		System.out.println(file.getAbsolutePath());
+
 		try {
 			while((line=r.readLine())!=null){
 
+
 				if(line.startsWith("GET")){
-					StringTokenizer token=new StringTokenizer(line);
-					fileName=token.nextToken();
-					fileName=token.nextToken();
-					fileName=fileName.substring(1);
-					System.out.println(fileName);
+					/*StringTokenizer token=new StringTokenizer(line);
+					FileName=token.nextToken();
+					FileName=token.nextToken();
+					FileName=FileName.substring(1);*/
+					System.out.println(FileName);
 
 
 
 
-					if(fileName.equals("")){
+					if(FileName.equals(null)){
 						System.out.println("jsndf");
 						w.println("HTTP/1.1 404 Not Found");
 						w.println("Server: MyServer");
@@ -82,13 +72,13 @@ public class Connection extends Thread {
 						r.close();
 						//ss.close();
 					}
-					if(fileName!=""){
-						String content=contentType(fileName);
-						Lesen(fileName);
-						bytes=gross(fileName);
+					if(FileName.equals("info.html")){
+						String content=contentType(FileName);
+						Lesen(file);
+						bytes=file.length();
 
 
-						bytes=gross(fileName);
+						bytes=file.length();
 						w.println("HTTP/1.1 200 OK");
 						w.println("Server: MyServer");
 						w.println("Connection: close");
@@ -101,6 +91,14 @@ public class Connection extends Thread {
 
 					}}
 				System.out.println("Server: "+line);
+
+
+
+
+
+
+
+
 
 			}
 			r.close();
@@ -119,17 +117,17 @@ public class Connection extends Thread {
 		}
 	}
 
-	public String contentType(String fileName) {
+	public String contentType(String FileName) {
 		// TODO Auto-generated method stub
-		if(fileName.endsWith(".htm") || fileName.endsWith(".html")){
+		if(FileName.endsWith(".htm") || FileName.endsWith(".html")){
 
 			return "text/html";
 		}
-		if(fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")){
+		if(FileName.endsWith(".jpg") || FileName.endsWith(".jpeg")){
 			return "image/jpeg";
 
 		}
-		if(fileName.endsWith(".gif")){
+		if(FileName.endsWith(".gif")){
 			return "image/gif";
 
 		}
@@ -151,12 +149,11 @@ public class Connection extends Thread {
 	}
 
 
-	public String Lesen(String f) {
-		String datei="";
+	public void Lesen(File f) {
 		String x;
 		FileReader fr;
 		try {
-			fr = new FileReader("Doc/"+f);
+			fr = new FileReader(DirName+File.separator+FileName);
 			BufferedReader br = new BufferedReader(fr);
 			while ((x=br.readLine())!=null){
 				body=body+x+bla;
@@ -174,20 +171,5 @@ public class Connection extends Thread {
 			w.close();
 
 		}
-		return datei;
-
-
 	}
-
-	public long gross(String f){
-		File file=new File(f);
-		return file.length();
-	}
-
-
-
-
-
-
-
 }
