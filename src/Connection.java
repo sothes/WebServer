@@ -14,11 +14,8 @@ import java.util.logging.*;
 public class Connection extends Thread {
 
 	private BufferedReader r;
-	final static String bla="\r\n";
+	private final static String bla="\r\n";
 	private PrintWriter w;
-	private DataOutputStream ou;
-	private Socket ss;
-	private long bytes;
 	private String body;
 	
 	private String FileName="info.html";
@@ -36,7 +33,7 @@ public class Connection extends Thread {
 		try {
 			r=new BufferedReader(new InputStreamReader(ss.getInputStream()));
 			w=new PrintWriter(new OutputStreamWriter(ss.getOutputStream()));
-			ou= new DataOutputStream(ss.getOutputStream());
+			DataOutputStream ou = new DataOutputStream(ss.getOutputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -57,10 +54,7 @@ public class Connection extends Thread {
 
 
 					if (line.startsWith("GET")) {
-					/*StringTokenizer token=new StringTokenizer(line);
-					FileName=token.nextToken();
-					FileName=token.nextToken();
-					FileName=FileName.substring(1);*/
+
 						conLogger.info("Path: " + FileName);
 
 
@@ -82,7 +76,7 @@ public class Connection extends Thread {
 							conLogger.info("Sending website in html format");
 							String content = contentType(FileName);
 							Lesen();
-							bytes = file.length();
+							long bytes = file.length();
 
 
 							bytes = file.length();

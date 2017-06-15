@@ -8,14 +8,14 @@ import java.util.logging.*;
 
 /**
  * Created by Eric on 15.06.2017.
+ * ServerLog for logging of warnings, info and errors
  */
 public class ServerLog{
 
     static public FileHandler fileTxt;
-    static private SimpleFormatter formatterTxt;
 
     static public FileHandler fileHTML;
-    static private Formatter formatterHTML;
+    //static private Formatter formatterHTML;
 
     static private String dirName="Doc"+ File.separator+"Logs"+File.separator;
 
@@ -39,10 +39,10 @@ public class ServerLog{
             String date = simpleDateFormat.format(new Date());
             System.out.println(date);
             fileTxt = new FileHandler(dirName+"log_"+date+".log");
-            fileHTML = new FileHandler(dirName+"log_"+date+".html");
+            //fileHTML = new FileHandler(dirName+"log_"+date+".html");
 
             // create a TXT formatter
-            formatterTxt = new SimpleFormatter();
+            SimpleFormatter formatterTxt = new SimpleFormatter();
             fileTxt.setFormatter(formatterTxt);
             logger.addHandler(fileTxt);
 

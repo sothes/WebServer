@@ -3,13 +3,12 @@ import ServerLogger.ServerLog;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.*;
 
 public class Server {
 
-	public static int Port=1312;
+	static int Port=1312;
 	
-	public Server(){
+	private Server(){
 
 		try{
 			ServerSocket server = new ServerSocket(Port);
@@ -26,9 +25,8 @@ public class Server {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {public void run(){ServerLog.fileTxt.close();ServerLog.fileHTML.close();System.out.println("LogsClosed");}}));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {ServerLog.fileTxt.close();ServerLog.fileHTML.close();System.out.println("LogsClosed");}));
 
 
 		try{
