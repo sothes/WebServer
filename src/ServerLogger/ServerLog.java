@@ -1,6 +1,9 @@
 package ServerLogger;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.*;
 
 /**
@@ -13,7 +16,8 @@ public class ServerLog{
 
     static public FileHandler fileHTML;
     static private Formatter formatterHTML;
-    //public ServerLogger.ServerLog() {
+
+    static private String dirName="Doc"+ File.separator+"Logs"+File.separator;
 
         static public void setup() throws IOException {
 
@@ -28,8 +32,14 @@ public class ServerLog{
             }
 
             logger.setLevel(Level.INFO);
-            fileTxt = new FileHandler("Logging.txt");
-            fileHTML = new FileHandler("Logging.html");
+
+            String pattern = "yyyy-MM-dd_HH-mm-ss.S";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+            String date = simpleDateFormat.format(new Date());
+            System.out.println(date);
+            fileTxt = new FileHandler(dirName+"log_"+date+".log");
+            fileHTML = new FileHandler(dirName+"log_"+date+".html");
 
             // create a TXT formatter
             formatterTxt = new SimpleFormatter();

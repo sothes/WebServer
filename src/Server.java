@@ -7,11 +7,12 @@ import java.util.logging.*;
 
 public class Server {
 
-	public static Logger loggi;
+	public static int Port=1312;
 	
-	public Server(int port){
+	public Server(){
+
 		try{
-			ServerSocket server = new ServerSocket(port);
+			ServerSocket server = new ServerSocket(Port);
 			while(true){
 				Socket ss=server.accept();
 				Connection con= new Connection(ss);
@@ -36,10 +37,7 @@ public class Server {
 			e.printStackTrace();
 		}
 
-		int port=1312;
-
-		//loggi.fine("Server starting on port: "+port);
-		new Server(port);
+		new Server();
 
 
 

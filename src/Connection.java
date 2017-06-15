@@ -9,9 +9,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.*;
 
 public class Connection extends Thread {
@@ -33,7 +30,7 @@ public class Connection extends Thread {
 
 	Connection(Socket ss){
 
-
+		conLogger.info("Connections established on port: "+Server.Port);
 
 		file = new File(DirName+File.separator+FileName);
 		try {
@@ -43,7 +40,6 @@ public class Connection extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//startLogging();
 
 	}
 
@@ -52,69 +48,71 @@ public class Connection extends Thread {
 		FileInputStream fis=null;
 		System.out.println(file.getAbsolutePath());
 
-		conLogger.info("Connection established");
+		synchronized (conLogger) {
 
-		try {
-			while((line=r.readLine())!=null){
+			conLogger.info("Connection established");
+
+			try {
+				while ((line = r.readLine()) != null) {
 
 
-				if(line.startsWith("GET")){
+					if (line.startsWith("GET")) {
 					/*StringTokenizer token=new StringTokenizer(line);
 					FileName=token.nextToken();
 					FileName=token.nextToken();
 					FileName=FileName.substring(1);*/
-					conLogger.info("Path: "+FileName);
+						conLogger.info("Path: " + FileName);
 
 
+						if (FileName.equals(null)) {
+							conLogger.warning("File not found, throwing 404");
+							System.out.println("404");
+							w.println("HTTP/1.1 404 Not Found");
+							w.println("Server: MyServer");
+							w.println("Connection: close");
+							w.println("Content-Type: text/html");
+							w.println("");
+							w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> hjshdf </body> </html>");
+							w.close();
+							r.close();
+							//ss.close();
+							conLogger.info("Connection closed");
+						}
+						if (FileName.equals("info.html")) {
+							conLogger.info("Sending website in html format");
+							String content = contentType(FileName);
+							Lesen();
+							bytes = file.length();
 
 
-					if(FileName.equals(null)){
-					    conLogger.warning("File not found, throwing 404");
-						System.out.println("404");
-						w.println("HTTP/1.1 404 Not Found");
-						w.println("Server: MyServer");
-						w.println("Connection: close");
-						w.println("Content-Type: text/html");
-						w.println("");
-						w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> hjshdf </body> </html>");
-						w.close();
-						r.close();
-						//ss.close();
-                        conLogger.info("Connection closed");
+							bytes = file.length();
+							w.println("HTTP/1.1 200 OK");
+							w.println("Server: MyServer");
+							w.println("Connection: close");
+							//w.println("Content-Length: "+bytes);
+							w.println("Content-Type: " + content);
+							w.println("");
+							w.println(body);
+							w.close();
+							conLogger.info("Connection closed");
+
+
+						}
 					}
-					if(FileName.equals("info.html")){
-					    conLogger.info("Sending website in html format");
-						String content = contentType(FileName);
-						Lesen();
-						bytes=file.length();
+					System.out.println("Server: " + line);
+				}
+				r.close();
 
-
-						bytes=file.length();
-						w.println("HTTP/1.1 200 OK");
-						w.println("Server: MyServer");
-						w.println("Connection: close");
-						//w.println("Content-Length: "+bytes);
-						w.println("Content-Type: "+content);
-						w.println("");
-						w.println(body);
-						w.close();
-						conLogger.info("Connection closed");
-
-
-					}}
-				System.out.println("Server: "+line);
+			} catch (IOException e) {
+				conLogger.warning("File not found, exception, showing 404");
+				w.println("HTTP/1.1 404 Not Found");
+				w.println("Server: MyServer");
+				w.println("Connection: close");
+				w.println("Content-Type: text/html");
+				w.println("");
+				w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> hjshdf </body> </html>");
+				w.close();
 			}
-			r.close();
-
-		} catch (IOException e) {
-		    conLogger.warning("File not found, exception, showing 404");
-			w.println("HTTP/1.1 404 Not Found");
-			w.println("Server: MyServer");
-			w.println("Connection: close");
-			w.println("Content-Type: text/html");
-			w.println("");
-			w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> hjshdf </body> </html>");
-			w.close();
 		}
 	}
 
