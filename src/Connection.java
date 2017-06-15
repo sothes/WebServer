@@ -9,10 +9,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.*;
 
 public class Connection extends Thread {
 
@@ -28,11 +28,13 @@ public class Connection extends Thread {
 	private String DirName="Doc";
 	private File file;
 
-	private Logger conLogger;
-
+	private final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 
 	Connection(Socket ss){
+
+
+
 		file = new File(DirName+File.separator+FileName);
 		try {
 			r=new BufferedReader(new InputStreamReader(ss.getInputStream()));
@@ -41,7 +43,7 @@ public class Connection extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		startLogging();
+		//startLogging();
 
 	}
 
@@ -171,13 +173,4 @@ public class Connection extends Thread {
 
 		}
 	}
-	private void startLogging(){
-        conLogger = Logger.getLogger(Connection.class.getName());
-        conLogger.setLevel(Level.ALL);
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.ALL);
-        conLogger.addHandler(handler);
-        handler.setFormatter(new SimpleFormatter());
-        conLogger.fine("hello world");
-    }
 }
