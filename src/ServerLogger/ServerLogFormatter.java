@@ -71,5 +71,7 @@ public class ServerLogFormatter extends Formatter{
         public String getTail(Handler h) {
             return "</table>\n</body>\n</html>";
         }
-    }
+
+
+}
 
