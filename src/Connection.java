@@ -1,35 +1,31 @@
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import ServerConfig.ServerConfigReader;
+
+import java.io.*;
 import java.net.Socket;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 public class Connection extends Thread {
 
-	private BufferedReader r;
 	private final static String bla="\r\n";
-	private PrintWriter w;
-	private String body;
-	
-	private String FileName="info.html";
-	private String DirName="Doc";
+    private final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private BufferedReader r;
+    private PrintWriter w;
+    private String body;
 	private File file;
-
-	private final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 
 	Connection(Socket ss){
 
-		conLogger.info("Connections established on port: "+Server.Port);
+        //get properties value
+        try {
+            file = new ServerConfigReader().getFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		file = new File(DirName+File.separator+FileName);
+
+        conLogger.info("Connections established on port: " + ss.getLocalPort());
+
 		try {
 			r=new BufferedReader(new InputStreamReader(ss.getInputStream()));
 			w=new PrintWriter(new OutputStreamWriter(ss.getOutputStream()));
@@ -39,6 +35,18 @@ public class Connection extends Thread {
 		}
 
 	}
+
+    private static void sendBytes(FileInputStream fis, OutputStream ou) {
+        byte[] buffer = new byte[1024];
+        int bytes = 0;
+        try {
+            while ((bytes = fis.read(buffer)) != -1) {
+                ou.write(buffer, 0, bytes);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 	public void run(){
 		String line;
@@ -55,12 +63,12 @@ public class Connection extends Thread {
 
 					if (line.startsWith("GET")) {
 
-						conLogger.info("Path: " + FileName);
+                        conLogger.info("Path: " + file.getPath());
 
 
-						if (FileName.equals(null)) {
-							conLogger.warning("File not found, throwing 404");
-							System.out.println("404");
+                        if (new ServerConfigReader().getFileName().equals(null)) {
+                            conLogger.warning("File not found, throwing 404");
+                            System.out.println("404");
 							w.println("HTTP/1.1 404 Not Found");
 							w.println("Server: MyServer");
 							w.println("Connection: close");
@@ -72,11 +80,11 @@ public class Connection extends Thread {
 							//ss.close();
 							conLogger.info("Connection closed");
 						}
-						if (FileName.equals("info.html")) {
-							conLogger.info("Sending website in html format");
-							String content = contentType(FileName);
-							Lesen();
-							long bytes = file.length();
+                        if (new ServerConfigReader().getFileName().equals("info.html")) {
+                            conLogger.info("Sending website in html format");
+                            String content = contentType(new ServerConfigReader().getFileName());
+                            Lesen();
+                            long bytes = file.length();
 
 
 							bytes = file.length();
@@ -128,27 +136,13 @@ public class Connection extends Thread {
 
 	}
 
-	private static void sendBytes(FileInputStream fis, OutputStream ou){
-		byte[] buffer = new byte[1024];
-		int bytes=0;
-		try {
-			while((bytes=fis.read(buffer))!= -1){
-				ou.write(buffer,0,bytes);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-
 	private void Lesen() {
 		String x;
 		FileReader fr;
 		try {
-			fr = new FileReader(DirName+File.separator+FileName);
-			BufferedReader br = new BufferedReader(fr);
-			while ((x=br.readLine())!=null){
+            fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            while ((x=br.readLine())!=null){
 				body=body+x+bla;
 			}
 
