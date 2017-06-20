@@ -1,48 +1,49 @@
+import ServerConfig.ServerConfigReader;
+import ServerLogger.ServerLog;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class Server {
 
-	public static Logger loggi;
-	
-	public Server(int port){
-		try{
-			ServerSocket server = new ServerSocket(port);
-			while(true){
-				Socket ss=server.accept();
-				Connection con= new Connection(ss);
-				con.start();
-			}
-		}
-		catch (IOException e){
-			e.printStackTrace();
-			
-		}
-	}
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+    private Server(int port) {
 
-		Server.loggi = Logger.getLogger(Connection.class.getName());
-		loggi.setLevel(Level.ALL);
-		ConsoleHandler handler = new ConsoleHandler();
-		handler.setLevel(Level.ALL);
-		loggi.addHandler(handler);
-		handler.setFormatter(new SimpleFormatter());
-		loggi.fine("hello world");
+        try {
+            ServerSocket server = new ServerSocket(port);
+            while (true) {
+                Socket ss = server.accept();
+                Connection con = new Connection(ss);
+                con.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
 
-		int port=1312;
+        }
+    }
 
-		loggi.fine("Server starting on port: "+port);
-		new Server(port);
+    public static void main(String[] args) {
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {ServerLog.fileTxt.close();ServerLog.fileHTML.close();System.out.println("LogsClosed");}));
 
 
-		
-	}
+        try {
+            ServerLog.setup();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ServerConfigReader confi;
+        try {
+            confi = new ServerConfigReader();
+            System.out.println(confi.getPort());
+            new Server(confi.getPort());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
 }
