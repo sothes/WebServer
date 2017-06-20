@@ -23,20 +23,19 @@ public class Server {
         }
     }
 
+
     public static void main(String[] args) {
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {ServerLog.fileTxt.close();ServerLog.fileHTML.close();System.out.println("LogsClosed");}));
-
+        ServerConfigReader confi;
 
         try {
             ServerLog.setup();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        ServerConfigReader confi;
-        try {
             confi = new ServerConfigReader();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                ServerLog.fileTxt.close();
+                System.out.println("LogsClosed");
+                confi.checkLogCount(4);
+            }));
             System.out.println(confi.getPort());
             new Server(confi.getPort());
         } catch (IOException e) {
@@ -45,5 +44,6 @@ public class Server {
 
 
     }
+
 
 }

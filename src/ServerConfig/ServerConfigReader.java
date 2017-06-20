@@ -48,6 +48,21 @@ public class ServerConfigReader {
             inputStream.close();
         }
 
+        checkLogCount(10);
+
+    }
+
+    public void checkLogCount(int maxLogCount) {
+        File logDir = new File(DocFolder + File.separator + "Logs");
+        if (logDir.listFiles().length > maxLogCount) {
+            int count = logDir.listFiles().length;
+            for (File file : logDir.listFiles()) {
+                if (count > maxLogCount) {
+                    file.delete();
+                    count--;
+                }
+            }
+        }
     }
 
     public File getFile() {
