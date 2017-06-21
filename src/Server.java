@@ -2,17 +2,19 @@ import ServerConfig.ServerConfigReader;
 import ServerLogger.ServerLog;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static final String END_OF_HEADER = "";
+    static final String END_OF_HEADER = "";
 
     private Server(int port) {
 
 
         try {
             ServerSocket server = new ServerSocket(port);
+            System.out.println(InetAddress.getLocalHost() + ":" + port);
             while (true) {
                 Socket ss = server.accept();
                 new Connection(ss);
@@ -36,7 +38,6 @@ public class Server {
                 System.out.println("LogsClosed");
                 confi.checkLogCount(4);
             }));
-            System.out.println(confi.getPort());
             new Server(confi.getPort());
         } catch (IOException e) {
             e.printStackTrace();

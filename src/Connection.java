@@ -1,6 +1,7 @@
 import ServerConfig.ServerConfigReader;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
@@ -20,10 +21,11 @@ public class Connection extends Thread {
 		//get properties value
 		try {
 			file = new ServerConfigReader().getFile();
+			conLogger.info("Connections established on: " + InetAddress.getLocalHost() + ":" + ss.getLocalPort());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		conLogger.info("Connections established on: " + ss.getLocalAddress() + ":" + ss.getLocalPort());
+
 
 		try {
 			r=new BufferedReader(new InputStreamReader(ss.getInputStream()));
@@ -84,7 +86,6 @@ public class Connection extends Thread {
 				}
 				ou.close();
 				r.close();
-				w.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -109,6 +110,7 @@ public class Connection extends Thread {
 	}
 
 	private void getRequest(File fileToSend) {
+		System.out.println(fileToSend.getAbsolutePath());
 		try {
 			if (fileToSend.exists()) {
 				conLogger.info("Sending website in html format");
@@ -121,7 +123,7 @@ public class Connection extends Thread {
 				ou.writeBytes(bla);
 				sendBytes(fileToSend);
 			}
-			if (!(file.exists())) {
+			if (!(fileToSend.exists())) {
 				conLogger.warning("File not found, throwing 404");
 				System.out.println("404");
 				w.println("HTTP/1.1 404 Not Found");
@@ -129,8 +131,10 @@ public class Connection extends Thread {
 				w.println("Connection: close");
 				w.println("Content-Type: text/html");
 				w.println("");
-				w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> hjshdf </body> </html>");
+				w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> 404 </body> </html>");
 				conLogger.info("Connection closed");
+				w.close();
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
