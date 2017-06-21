@@ -48,7 +48,6 @@ public class ServerConfigReader {
             inputStream.close();
         }
 
-        checkLogCount(10);
 
     }
 
@@ -79,5 +78,9 @@ public class ServerConfigReader {
 
     public String getDirName() {
         return DirName;
+    }
+
+    public String getDocFolder() {
+        return DocFolder;
     }
 }
