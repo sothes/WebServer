@@ -7,11 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ec0687c1-155e-450c-87be-32bf352230dd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Betrieb/Connection.class" afterPath="$PROJECT_DIR$/out/production/Betrieb/Connection.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/Betrieb/Server.class" afterPath="$PROJECT_DIR$/out/production/Betrieb/Server.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Connection.java" afterPath="$PROJECT_DIR$/src/Connection.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Server.java" afterPath="$PROJECT_DIR$/src/Server.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -694,7 +690,14 @@
       <option name="project" value="LOCAL" />
       <updated>1498030006055</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="0.52 release">
+      <created>1498032942001</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1498032942001</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -788,7 +791,8 @@
     <MESSAGE value="Logger updated 200617&#10;&#10;Logger now closes file when programm is properly exit'd" />
     <MESSAGE value="ConfigReader&#10;&#10;included a config reader who reads the config.properties file in /res and returns a file and port nr etc" />
     <MESSAGE value="Final" />
-    <option name="LAST_COMMIT_MESSAGE" value="Final" />
+    <MESSAGE value="0.52 release" />
+    <option name="LAST_COMMIT_MESSAGE" value="0.52 release" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
