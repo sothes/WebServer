@@ -4,11 +4,17 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+/**
+ * Created by Eric on 04.06.2017.
+ * This class will send and receive the requests of the client
+ */
 
 public class Connection extends Thread {
 
-	private final static String bla="\r\n";
+	private final static String NextLine = System.getProperty("line.separator");
 	private final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private BufferedReader r;
 	private PrintWriter w;
@@ -25,11 +31,9 @@ public class Connection extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 		try {
-			r=new BufferedReader(new InputStreamReader(ss.getInputStream()));
-			w=new PrintWriter(new OutputStreamWriter(ss.getOutputStream()));
+			r = new BufferedReader(new InputStreamReader(ss.getInputStream()));
+			w = new PrintWriter(new OutputStreamWriter(ss.getOutputStream()));
 			ou = new DataOutputStream(ss.getOutputStream());
 			this.start();
 		} catch (IOException e) {
@@ -40,7 +44,7 @@ public class Connection extends Thread {
 	private void sendBytes(File fileToSend) {
 		InputStream fis;
 		byte[] buffer = new byte[4096];
-		int bytes = 0;
+		int bytes;
 		try {
 			fis = new FileInputStream(fileToSend);
 
@@ -49,6 +53,7 @@ public class Connection extends Thread {
 			}
 			fis.close();
 		} catch (IOException e) {
+			conLogger.log(Level.SEVERE, "File wasn't found!", e);
 			w.println("HTTP/1.1 404 Not Found");
 			w.println("Server: MyServer");
 			w.println("Connection: close");
@@ -63,50 +68,40 @@ public class Connection extends Thread {
 		String line;
 		System.out.println(file.getAbsolutePath());
 
-		synchronized (conLogger) {
+		conLogger.info("Connection established");
 
-			conLogger.info("Connection established");
-
-			try {
-				while ((line = r.readLine()) != null) {
-					System.out.println("Server: " + line);
-					if (line.startsWith("GET")) {
-						StringTokenizer token = new StringTokenizer(line);
-						String reqFile = token.nextToken();
-						reqFile = token.nextToken();
-						reqFile = reqFile.substring(1);
-						System.out.println(reqFile);
-						if (!(reqFile.isEmpty()))
-							getRequest(new File(new ServerConfigReader().getDocFolder() + File.separator + new ServerConfigReader().getDirName() + File.separator + reqFile));
-						else {
-							getRequest(file);
-						}
+		try {
+			while ((line = r.readLine()) != null) {
+				System.out.println("Server: " + line);
+				if (line.startsWith("GET")) {
+					StringTokenizer token = new StringTokenizer(line);
+					String reqFile = token.nextToken();
+					reqFile = token.nextToken();
+					reqFile = reqFile.substring(1);
+					System.out.println(reqFile);
+					if (!(reqFile.isEmpty()))
+						getRequest(new File(new ServerConfigReader().getDocFolder() + File.separator + new ServerConfigReader().getDirName() + File.separator + reqFile));
+					else {
+						getRequest(file);
 					}
-					if (line.equals(Server.END_OF_HEADER)) break;
 				}
-				ou.close();
-				r.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+				if (line.equals(Server.END_OF_HEADER)) break;
 			}
+			ou.close();
+			r.close();
+		} catch (Exception e) {
+			conLogger.log(Level.SEVERE, "File wasn't found!", e);
+			e.printStackTrace();
 		}
 	}
 
+
 	private String contentType(String FileName) {
-		if(FileName.endsWith(".htm") || FileName.endsWith(".html")){
-
-			return "text/html";
-		}
-		if(FileName.endsWith(".jpg") || FileName.endsWith(".jpeg")){
-			return "image/jpeg";
-
-		}
-		if(FileName.endsWith(".gif")){
-			return "image/gif";
-
-		}
+		//What filetype is the requested file?
+		if (FileName.endsWith(".htm") || FileName.endsWith(".html")) return "text/html";
+		if (FileName.endsWith(".jpg") || FileName.endsWith(".jpeg")) return "image/jpeg";
+		if (FileName.endsWith(".gif")) return "image/gif";
 		return "application/octet-stream";
-
 	}
 
 	private void getRequest(File fileToSend) {
@@ -116,27 +111,27 @@ public class Connection extends Thread {
 				conLogger.info("Sending website in html format");
 				String content = contentType(new ServerConfigReader().getFileName());
 
-				ou.writeBytes("HTTP/1.1 200 OK" + bla);
-				ou.writeBytes("Server: MyServer" + bla);
+				ou.writeBytes("HTTP/1.1 200 OK" + NextLine);
+				ou.writeBytes("Server: MyServer" + NextLine);
 				ou.writeBytes("Connection: close");
-				ou.writeBytes("Content-Type: " + content + bla);
-				ou.writeBytes(bla);
+				ou.writeBytes("Content-Type: " + content + NextLine);
+				ou.writeBytes(NextLine);
 				sendBytes(fileToSend);
 			}
 			if (!(fileToSend.exists())) {
-				conLogger.warning("File not found, throwing 404");
+				conLogger.warning("File: " + fileToSend.getAbsolutePath() + " not found, throwing 404");
 				System.out.println("404");
 				w.println("HTTP/1.1 404 Not Found");
 				w.println("Server: MyServer");
 				w.println("Connection: close");
 				w.println("Content-Type: text/html");
 				w.println("");
-				w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> 404 </body> </html>");
+				w.println("<html> <head> <title> Error 404: Site not found </title> </head> <body bgcolor=red> Error 404: Site not found </body> </html>");
 				conLogger.info("Connection closed");
 				w.close();
-
 			}
 		} catch (IOException e) {
+			conLogger.log(Level.SEVERE, "Exception in getRequest void", e);
 			e.printStackTrace();
 		}
 	}

@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Properties;
 
 /**
  * Created by Eric on 20.06.2017.
+ * This class reads the config.properties file in /res and creates global variables
  */
 public class ServerConfigReader {
 
@@ -18,6 +18,8 @@ public class ServerConfigReader {
     private String FileName;
     private String DirName;
     private String DocFolder;
+    private int MaxLogCount;
+    private String ExceptionDir;
 
     public ServerConfigReader() throws IOException {
 
@@ -33,7 +35,7 @@ public class ServerConfigReader {
                 throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
             }
 
-            Date time = new Date(System.currentTimeMillis());
+            //Date time = new Date(System.currentTimeMillis());
 
             // get the property value and print it out
             String portTemp = prop.getProperty("port");
@@ -41,10 +43,14 @@ public class ServerConfigReader {
             FileName = prop.getProperty("fileName");
             DocFolder = prop.getProperty("docFolder");
             DirName = prop.getProperty("dirName");
+            String maxLogCount = prop.getProperty("maxLogCount");
+            MaxLogCount = Integer.parseInt(maxLogCount);
+            ExceptionDir = prop.getProperty("exceptionsFolder");
 
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
+            assert inputStream != null;
             inputStream.close();
         }
 
@@ -82,5 +88,13 @@ public class ServerConfigReader {
 
     public String getDocFolder() {
         return DocFolder;
+    }
+
+    public int getMaxLogCount() {
+        return MaxLogCount;
+    }
+
+    public String getExceptionDir() {
+        return ExceptionDir;
     }
 }

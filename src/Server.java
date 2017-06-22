@@ -6,12 +6,15 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Created by Eric on 04.06.2017.
+ * This class contains the main and the server
+ */
+
 public class Server {
     static final String END_OF_HEADER = "";
 
     private Server(int port) {
-
-
         try {
             ServerSocket server = new ServerSocket(port);
             System.out.println(InetAddress.getLocalHost() + ":" + port);
@@ -21,30 +24,22 @@ public class Server {
             }
         } catch (IOException e) {
             e.printStackTrace();
-
         }
     }
 
-
     public static void main(String[] args) {
-
-        ServerConfigReader confi;
-
+        ServerConfigReader config;
         try {
             ServerLog.setup();
-            confi = new ServerConfigReader();
+            config = new ServerConfigReader();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 ServerLog.fileTxt.close();
                 System.out.println("LogsClosed");
-                confi.checkLogCount(4);
+                config.checkLogCount(config.getMaxLogCount());
             }));
-            new Server(confi.getPort());
+            new Server(config.getPort());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
-
-
 }
