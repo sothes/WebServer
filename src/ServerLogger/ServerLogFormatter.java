@@ -9,6 +9,7 @@ import java.util.logging.LogRecord;
 
 /**
  * Created by Eric on 15.06.2017.
+ *
  */
 public class ServerLogFormatter extends Formatter{
 

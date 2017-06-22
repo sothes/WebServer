@@ -17,7 +17,8 @@ public class Server {
     private Server(int port) {
         try {
             ServerSocket server = new ServerSocket(port);
-            System.out.println(InetAddress.getLocalHost() + ":" + port);
+            System.out.println("Server started on " + InetAddress.getLocalHost() + ":" + port);
+            System.out.println("Press strg+c to stop the server");
             while (true) {
                 Socket ss = server.accept();
                 new Connection(ss);
@@ -30,12 +31,13 @@ public class Server {
     public static void main(String[] args) {
         ServerConfigReader config;
         try {
-            ServerLog.setup();
             config = new ServerConfigReader();
+            ServerLog.setup(config.getLogFolder(), config.getLogPattern(), config.getLogOutFormat());
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                ServerLog.fileTxt.close();
+                if (config.getLogOutFormat().equals("txt")) ServerLog.fileTxt.close();
+                if (config.getLogOutFormat().equals("html")) ServerLog.fileHTML.close();
                 System.out.println("LogsClosed");
-                config.checkLogCount(config.getMaxLogCount());
+                if (config.checkLogCount(config.getMaxLogCount())) System.out.println("Logs cleared");
             }));
             new Server(config.getPort());
         } catch (IOException e) {

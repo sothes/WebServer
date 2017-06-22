@@ -14,12 +14,12 @@ public class ServerLog {
 
     static public FileHandler fileTxt;
 
-    //static public FileHandler fileHTML;
-    //static private Formatter formatterHTML;
+    static public FileHandler fileHTML;
+    static private Formatter formatterHTML;
 
-    static private String dirName = "Doc" + File.separator + "Logs" + File.separator;
+    static public void setup(File dirName, String pattern, String outputFormat) throws IOException {
 
-    static public void setup() throws IOException {
+
 
         // get the global logger to configure it
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -31,22 +31,29 @@ public class ServerLog {
             rootLogger.removeHandler(handlers[0]);
         }
 
-        logger.setLevel(Level.INFO);
+        logger.setLevel(Level.ALL);
 
-        String pattern = "yyyy-MM-dd_HH-mm-ss.S";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
         String date = simpleDateFormat.format(new Date());
         System.out.println(date);
-        fileTxt = new FileHandler(dirName + "log_" + date + ".log");
-        //fileHTML = new FileHandler(dirName+"log_"+date+".html");
 
-        // create a TXT formatter
-        SimpleFormatter formatterTxt = new SimpleFormatter();
-        fileTxt.setFormatter(formatterTxt);
-        logger.addHandler(fileTxt);
+        if (outputFormat.equals("txt")) {
+            System.out.println("TXT");
+            fileTxt = new FileHandler(dirName.getPath() + File.separator + "log_" + date + ".log", true);
+            SimpleFormatter formatterTxt = new SimpleFormatter();
+            fileTxt.setFormatter(formatterTxt);
+            logger.addHandler(fileTxt);
+        }
+        if (outputFormat.equals("html")) {
+            System.out.println("HTML");
+            fileHTML = new FileHandler(dirName.getPath() + File.separator + "log_" + date + ".html", true);
+            formatterHTML = new ServerLogFormatter();
+            fileHTML.setFormatter(formatterHTML);
+            logger.addHandler(fileHTML);
+        }
+
 
     }
-
 }
 

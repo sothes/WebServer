@@ -20,6 +20,9 @@ public class ServerConfigReader {
     private String DocFolder;
     private int MaxLogCount;
     private String ExceptionDir;
+    private String LogFolder;
+    private String LogPattern;
+    private String LogOutFormat;
 
     public ServerConfigReader() throws IOException {
 
@@ -43,9 +46,14 @@ public class ServerConfigReader {
             FileName = prop.getProperty("fileName");
             DocFolder = prop.getProperty("docFolder");
             DirName = prop.getProperty("dirName");
+            LogFolder = prop.getProperty("logFolder");
             String maxLogCount = prop.getProperty("maxLogCount");
             MaxLogCount = Integer.parseInt(maxLogCount);
             ExceptionDir = prop.getProperty("exceptionsFolder");
+            LogPattern = prop.getProperty("logPattern");
+            LogOutFormat = prop.getProperty("logOutFormat");
+
+            checkExists(getLogFolder());
 
         } catch (Exception e) {
             System.out.println("Exception: " + e);
@@ -57,7 +65,7 @@ public class ServerConfigReader {
 
     }
 
-    public void checkLogCount(int maxLogCount) {
+    public boolean checkLogCount(int maxLogCount) {
         File logDir = new File(DocFolder + File.separator + "Logs");
         if (logDir.listFiles().length > maxLogCount) {
             int count = logDir.listFiles().length;
@@ -67,7 +75,19 @@ public class ServerConfigReader {
                     count--;
                 }
             }
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    private void checkExists(File logFolder) {
+        if (!(logFolder.exists())) {
+            if (!(new File(logFolder.getParent()).exists()))
+                if ((new File(logFolder.getParent())).mkdir()) System.out.println("Doc Directory Created");
+            if (logFolder.mkdir()) System.out.println("Log Directory Created");
+        }
+
     }
 
     public File getFile() {
@@ -96,5 +116,17 @@ public class ServerConfigReader {
 
     public String getExceptionDir() {
         return ExceptionDir;
+    }
+
+    public File getLogFolder() {
+        return new File(DocFolder + File.separator + LogFolder);
+    }
+
+    public String getLogPattern() {
+        return LogPattern;
+    }
+
+    public String getLogOutFormat() {
+        return LogOutFormat;
     }
 }

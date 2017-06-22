@@ -3,6 +3,7 @@ import ServerConfig.ServerConfigReader;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,22 +72,24 @@ public class Connection extends Thread {
 		conLogger.info("Connection established");
 
 		try {
+			ArrayList<String> tempLine = new ArrayList<>();
 			while ((line = r.readLine()) != null) {
-				System.out.println("Server: " + line);
+				if (!line.isEmpty()) tempLine.add(NextLine + line);
 				if (line.startsWith("GET")) {
 					StringTokenizer token = new StringTokenizer(line);
 					String reqFile = token.nextToken();
 					reqFile = token.nextToken();
 					reqFile = reqFile.substring(1);
-					System.out.println(reqFile);
+					conLogger.info("requested file: " + reqFile);
 					if (!(reqFile.isEmpty()))
-						getRequest(new File(new ServerConfigReader().getDocFolder() + File.separator + new ServerConfigReader().getDirName() + File.separator + reqFile));
+						getRequest(new File(file.getParent() + File.separator + reqFile));
 					else {
 						getRequest(file);
 					}
 				}
 				if (line.equals(Server.END_OF_HEADER)) break;
 			}
+			conLogger.info("Request: " + tempLine);
 			ou.close();
 			r.close();
 		} catch (Exception e) {
@@ -105,7 +108,8 @@ public class Connection extends Thread {
 	}
 
 	private void getRequest(File fileToSend) {
-		System.out.println(fileToSend.getAbsolutePath());
+		System.out.println("Requested to send file: " + fileToSend.getAbsolutePath());
+		conLogger.info("Requested to send file: " + fileToSend.getAbsolutePath());
 		try {
 			if (fileToSend.exists()) {
 				conLogger.info("Sending website in html format");
@@ -117,6 +121,7 @@ public class Connection extends Thread {
 				ou.writeBytes("Content-Type: " + content + NextLine);
 				ou.writeBytes(NextLine);
 				sendBytes(fileToSend);
+				conLogger.info("file was completely send");
 			}
 			if (!(fileToSend.exists())) {
 				conLogger.warning("File: " + fileToSend.getAbsolutePath() + " not found, throwing 404");
