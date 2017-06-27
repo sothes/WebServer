@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Created by Eric on 20.06.2017.
+ * Created on 20.06.2017.
  * This class reads the config.properties file in /res and creates global variables
  */
 public class ServerConfigReader {

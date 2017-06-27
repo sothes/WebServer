@@ -8,7 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Created by Eric on 04.06.2017.
+ * Created on 04.06.2017.
  * This class contains the main and the server
  */
 

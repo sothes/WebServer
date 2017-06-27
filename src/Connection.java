@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Eric on 04.06.2017.
+ * Created on 04.06.2017.
  * This class will send and receive the requests of the client
  */
 
