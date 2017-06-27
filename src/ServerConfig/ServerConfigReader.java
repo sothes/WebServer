@@ -16,8 +16,8 @@ public class ServerConfigReader {
 
     private int Port;
     private String FileName;
-    private String DirName;
     private String DocFolder;
+    private String HTMLFolder;
     private int MaxLogCount;
     private String ExceptionDir;
     private String LogFolder;
@@ -45,7 +45,7 @@ public class ServerConfigReader {
             Port = Integer.parseInt(portTemp);
             FileName = prop.getProperty("fileName");
             DocFolder = prop.getProperty("docFolder");
-            DirName = prop.getProperty("dirName");
+            HTMLFolder = prop.getProperty("htmlFolder");
             LogFolder = prop.getProperty("logFolder");
             String maxLogCount = prop.getProperty("maxLogCount");
             MaxLogCount = Integer.parseInt(maxLogCount);
@@ -91,7 +91,7 @@ public class ServerConfigReader {
     }
 
     public File getFile() {
-        return new File(DocFolder + File.separator + getDirName() + File.separator + FileName);
+        return new File(DocFolder + File.separator + getHtmlFolder() + File.separator + FileName);
     }
 
     public int getPort() {
@@ -102,8 +102,8 @@ public class ServerConfigReader {
         return FileName;
     }
 
-    public String getDirName() {
-        return DirName;
+    public String getHtmlFolder() {
+        return HTMLFolder;
     }
 
     public String getDocFolder() {

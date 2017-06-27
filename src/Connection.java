@@ -15,19 +15,19 @@ import java.util.logging.Logger;
 
 public class Connection extends Thread {
 
+	public final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private final static String NextLine = System.getProperty("line.separator");
-	private final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private BufferedReader r;
 	private PrintWriter w;
 	private File file;
 	private DataOutputStream ou;
 
 
-	Connection(Socket ss){
+	Connection(Socket ss, File file) {
 
 		//get properties value
 		try {
-			file = new ServerConfigReader().getFile();
+			this.file = file;
 			conLogger.info("Connections established on: " + InetAddress.getLocalHost() + ":" + ss.getLocalPort());
 		} catch (IOException e) {
 			e.printStackTrace();

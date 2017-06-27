@@ -15,7 +15,6 @@ public class ServerLog {
     static public FileHandler fileTxt;
 
     static public FileHandler fileHTML;
-    static private Formatter formatterHTML;
 
     static public void setup(File dirName, String pattern, String outputFormat) throws IOException {
 
@@ -48,7 +47,7 @@ public class ServerLog {
         if (outputFormat.equals("html")) {
             System.out.println("HTML");
             fileHTML = new FileHandler(dirName.getPath() + File.separator + "log_" + date + ".html", true);
-            formatterHTML = new ServerLogFormatter();
+            Formatter formatterHTML = new ServerLogFormatter();
             fileHTML.setFormatter(formatterHTML);
             logger.addHandler(fileHTML);
         }
