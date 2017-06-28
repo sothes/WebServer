@@ -15,17 +15,18 @@ import java.util.logging.Logger;
 
 public class Connection extends Thread {
 
-	public final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	private final static String NextLine = System.getProperty("line.separator");
+    final static Logger conLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private final static String NextLine = System.getProperty("line.separator");
 	private BufferedReader r;
 	private PrintWriter w;
 	private File file;
 	private DataOutputStream ou;
+    private String ReqIP;
 
 
 	Connection(Socket ss, File file) {
-
-		//get properties value
+        ReqIP = ss.getRemoteSocketAddress().toString();
+        //get properties value
 		try {
 			this.file = file;
 			conLogger.info("Connections established on: " + InetAddress.getLocalHost() + ":" + ss.getLocalPort());
@@ -60,16 +61,15 @@ public class Connection extends Thread {
 			w.println("Connection: close");
 			w.println("Content-Type: text/html");
 			w.println("");
-			w.println("<html> <head> <title> bla </title> </head> <body bgcolor=red> hjshdf </body> </html>");
-			w.close();
+            w.println("<html> <head> <title> 404 </title> </head> <body bgcolor=red> File not found on this server, sorry </body> </html>");
+            w.close();
 		}
 	}
 
 	public void run(){
 		String line;
-		System.out.println(file.getAbsolutePath());
 
-		conLogger.info("Connection established");
+        conLogger.info("Connection established to " + ReqIP);
 
 		try {
 			ArrayList<String> tempLine = new ArrayList<>();
@@ -80,8 +80,8 @@ public class Connection extends Thread {
 					String reqFile = token.nextToken();
 					reqFile = token.nextToken();
 					reqFile = reqFile.substring(1);
-					conLogger.info("requested file: " + reqFile);
-					if (!(reqFile.isEmpty()))
+                    conLogger.info(ReqIP + " requested file: " + reqFile);
+                    if (!(reqFile.isEmpty()))
 						getRequest(new File(file.getParent() + File.separator + reqFile));
 					else {
 						getRequest(file);
@@ -89,8 +89,8 @@ public class Connection extends Thread {
 				}
 				if (line.equals(Server.END_OF_HEADER)) break;
 			}
-			conLogger.info("Request: " + tempLine);
-			ou.close();
+            conLogger.info(ReqIP + " request: " + tempLine);
+            ou.close();
 			r.close();
 		} catch (Exception e) {
 			conLogger.log(Level.SEVERE, "File wasn't found!", e);
@@ -102,18 +102,21 @@ public class Connection extends Thread {
 	private String contentType(String FileName) {
 		//What filetype is the requested file?
 		if (FileName.endsWith(".htm") || FileName.endsWith(".html")) return "text/html";
-		if (FileName.endsWith(".jpg") || FileName.endsWith(".jpeg")) return "image/jpeg";
-		if (FileName.endsWith(".gif")) return "image/gif";
-		return "application/octet-stream";
+        if (FileName.endsWith(".jpg") || FileName.endsWith(".jpeg") || FileName.endsWith(".JPG") || FileName.endsWith(".JPEG"))
+            return "image/jpeg";
+        if (FileName.endsWith(".gif")) return "image/gif";
+        if (FileName.endsWith(".ico")) return "image/ico";
+        return "application/octet-stream";
 	}
 
 	private void getRequest(File fileToSend) {
-		System.out.println("Requested to send file: " + fileToSend.getAbsolutePath());
-		conLogger.info("Requested to send file: " + fileToSend.getAbsolutePath());
-		try {
+        System.out.println("Requested to send file: " + fileToSend.getAbsolutePath() + " to " + ReqIP);
+        conLogger.info("Requested to send file: " + fileToSend.getAbsolutePath() + " to " + ReqIP);
+        try {
 			if (fileToSend.exists()) {
-				conLogger.info("Sending website in html format");
-				String content = contentType(new ServerConfigReader().getFileName());
+                System.out.println("Sending file: " + fileToSend.getAbsolutePath() + " to " + ReqIP);
+                conLogger.info("Sending file: " + fileToSend.getAbsolutePath() + " to " + ReqIP);
+                String content = contentType(new ServerConfigReader().getFileName());
 
 				ou.writeBytes("HTTP/1.1 200 OK" + NextLine);
 				ou.writeBytes("Server: MyServer" + NextLine);
@@ -124,16 +127,16 @@ public class Connection extends Thread {
 				conLogger.info("file was completely send");
 			}
 			if (!(fileToSend.exists())) {
-				conLogger.warning("File: " + fileToSend.getAbsolutePath() + " not found, throwing 404");
-				System.out.println("404");
-				w.println("HTTP/1.1 404 Not Found");
+                System.out.println("Requested file " + fileToSend.getAbsolutePath() + " not found, throwing 404");
+                conLogger.log(Level.SEVERE, "Requested file " + fileToSend.getAbsolutePath() + " not found, throwing 404");
+                w.println("HTTP/1.1 404 Not Found");
 				w.println("Server: MyServer");
 				w.println("Connection: close");
 				w.println("Content-Type: text/html");
 				w.println("");
 				w.println("<html> <head> <title> Error 404: Site not found </title> </head> <body bgcolor=red> Error 404: Site not found </body> </html>");
-				conLogger.info("Connection closed");
-				w.close();
+                conLogger.info("Connection to " + ReqIP + " closed");
+                w.close();
 			}
 		} catch (IOException e) {
 			conLogger.log(Level.SEVERE, "Exception in getRequest void", e);

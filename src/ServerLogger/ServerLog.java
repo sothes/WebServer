@@ -35,17 +35,17 @@ public class ServerLog {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
         String date = simpleDateFormat.format(new Date());
-        System.out.println(date);
+        System.out.println("Current/Startdate: " + date);
 
         if (outputFormat.equals("txt")) {
-            System.out.println("TXT");
+            System.out.println("Log-File format: .txt/.log");
             fileTxt = new FileHandler(dirName.getPath() + File.separator + "log_" + date + ".log", true);
             SimpleFormatter formatterTxt = new SimpleFormatter();
             fileTxt.setFormatter(formatterTxt);
             logger.addHandler(fileTxt);
         }
         if (outputFormat.equals("html")) {
-            System.out.println("HTML");
+            System.out.println("Log-File format: HTML");
             fileHTML = new FileHandler(dirName.getPath() + File.separator + "log_" + date + ".html", true);
             Formatter formatterHTML = new ServerLogFormatter();
             fileHTML.setFormatter(formatterHTML);
